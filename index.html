@@ -93,19 +93,17 @@
     .drag-handle { position: absolute; z-index: 2; right: 13px; top: 13px; width: 34px; height: 34px; border: 1px solid #ffffff39; border-radius: 8px; background: #10141dc9; color: #e7e8eb; display: grid; place-items: center; cursor: grab; backdrop-filter: blur(8px); }
     .drag-handle:active { cursor: grabbing; }
     .drag-handle svg { width: 17px; height: 17px; }
-    .card-body { padding: 19px 19px 0; display: flex; flex-direction: column; flex: 1; min-width: 0; }
-    .card-category { color: #dcab82; letter-spacing: .17em; font-size: 10px; font-weight: 810; text-transform: uppercase; margin-bottom: 8px; }
-    .card-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; min-height: 27px; }
+    .card-body { padding: 14px 19px 0; display: flex; flex-direction: column; flex: 1; min-width: 0; }
+    .card-meta { display: flex; flex-wrap: wrap; gap: 7px; min-height: 27px; }
     .meta-tag { color: #a7b1c0; background: #232b39; border: 1px solid #303a4b; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 640; }
-    .page-box { background: #1e2634; border: 1px solid #2c3645; border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 19px; }
+    .page-box { background: #1e2634; border: 1px solid #2c3645; border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
     .page-info small { display: block; color: #97a2b1; font-size: 11px; margin-bottom: 1px; }
     .page-number { font-size: 26px; font-weight: 790; line-height: 1.2; letter-spacing: -.055em; font-variant-numeric: tabular-nums; }
     .page-number .dots { color: var(--accent); }
     .status-toggle { border: 1px solid #665039; border-radius: 7px; padding: 6px 8px; background: #3a3027; color: #ffc08a; font-size: 10px; line-height: 1.3; font-weight: 750; max-width: 109px; text-align: center; }
     .status-toggle.finished { background: #203a33; border-color: #32594b; color: #a4e4c2; }
     .status-toggle:hover { filter: brightness(1.15); }
-    .card-bottom { margin-top: auto; padding-top: 18px; }
-    .updated-line { color: #8492a2; font-size: 11px; margin-bottom: 14px; }
+    .card-bottom { margin-top: auto; padding-top: 12px; }
     .card-actions { margin: 0 -19px; padding: 11px 16px; display: flex; align-items: center; gap: 7px; border-top: 1px solid #2b3543; }
     .card-action { border: 1px solid transparent; background: transparent; color: #b5c0ce; border-radius: 7px; padding: 8px; min-height: 35px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; font-weight: 650; }
     .card-action:hover { color: var(--text); background: #2a3443; }
@@ -332,10 +330,6 @@
       return list.sort(orderByManual);
     }
     function isManualEnabled() { return state.sort === 'manual'; }
-    function formattedDate(timestamp) {
-      if (!Number.isFinite(timestamp)) return 'Unbekannt';
-      return new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(timestamp));
-    }
     function makeCard(item, index, total, manual) {
       const card = document.createElement('article');
       card.className = 'comic-card';
@@ -347,9 +341,9 @@
           <h3 class="card-title"></h3>
           <span class="drag-handle" draggable="true" role="button" tabindex="0" aria-label="Comic durch Ziehen sortieren" title="Zum Sortieren ziehen">${icon('grip')}</span>
         </div>
-        <div class="card-body"><div class="card-category"></div><div class="card-meta"></div>
+        <div class="card-body"><div class="card-meta"></div>
           <div class="page-box"><div class="page-info"><small>Aktuelle Seite</small><div class="page-number"></div></div><button class="status-toggle" type="button" data-action="toggle" title="Story-Status ändern"></button></div>
-          <div class="card-bottom"><div class="updated-line"></div><div class="card-actions">
+          <div class="card-bottom"><div class="card-actions">
             <button class="card-action increment" type="button" data-action="increment" title="Eine Seite weiter">${icon('plus')} 1 Seite</button>
             <span class="card-spacer"></span>
             <button class="card-action" type="button" data-action="edit" title="Comic bearbeiten" aria-label="Comic bearbeiten">${icon('edit')}</button>
@@ -365,12 +359,11 @@
       } else {
         card.querySelector('.initial').textContent = item.title.slice(0,1).toLocaleUpperCase('de') || 'C';
       }
-      card.querySelector('.card-category').textContent = item.part ? `PART ${item.part}` : (item.volume ? 'SAMMELBAND' : 'COMIC');
       card.querySelector('.card-title').textContent = item.title;
       const metas = [];
-      if (item.volume) metas.push(`Vol. ${item.volume}`);
-      if (item.part) metas.push(`Part ${item.part}`);
-      if (item.issue) metas.push(`Ausgabe ${item.issue}`);
+      if (item.volume) metas.push(`Vol ${item.volume}`);
+      if (item.part) metas.push(`Pt ${item.part}`);
+      if (item.issue) metas.push(`#${item.issue}`);
       if (item.year) metas.push(String(item.year));
       const meta = card.querySelector('.card-meta');
       if (!metas.length) metas.push('Keine Zusatzangaben');
@@ -385,7 +378,6 @@
       status.textContent = item.ongoing ? '● Story offen' : '✓ Beendet';
       status.classList.toggle('finished', !item.ongoing);
       status.setAttribute('aria-label', item.ongoing ? 'Story offen, als beendet markieren' : 'Story beendet, als offen markieren');
-      card.querySelector('.updated-line').textContent = `Zuletzt geändert · ${formattedDate(item.updatedAt)}`;
       card.querySelector('.drag-handle').hidden = !manual;
       card.querySelector('.move-controls').hidden = !manual;
       if (manual) {

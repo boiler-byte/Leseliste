@@ -2,7 +2,7 @@ LESELISTE – INSTALLIERBARE PWA
 ==============================
 
 Inhalt:
-  index.html                Die Leseliste-App (Version 3, als PWA)
+  index.html                Die Leseliste-App (Version 4, als PWA)
   manifest.webmanifest      Installationsinformationen
   service-worker.js         Offline-Funktion
   icons/                    App-Icons
@@ -33,3 +33,7 @@ Eine direkt per Doppelklick geöffnete index.html ist keine installierbare
 PWA: Service Worker funktionieren nur über HTTPS oder localhost.
 
 Die App benötigt keine externen Bibliotheken oder Netzwerkdienste.
+
+NEU IN VERSION 4
+- Kompakte Comic-Karten ohne Änderungsdatum und Zwischenüberschrift.
+- Metadaten kurz als Vol, Pt und # angezeigt.
