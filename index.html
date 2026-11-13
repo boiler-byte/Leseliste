@@ -150,6 +150,18 @@
     .form-fields { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
     .form-fields input, .form-fields textarea { min-width: 0; }
+    /* Große +/- Schaltflächen ermöglichen Korrekturen ohne Bildschirmtastatur. */
+    .number-stepper { display: grid; grid-template-columns: 36px minmax(0,1fr) 36px; min-width: 0; min-height: 43px; overflow: hidden; background: #181e2a; border: 1px solid #303849; border-radius: 9px; transition: border-color .15s, box-shadow .15s; }
+    .number-stepper:focus-within { border-color: #c48b59; box-shadow: 0 0 0 3px #ffb46e17; }
+    .number-stepper .field-control { min-width: 0; min-height: 43px; border: 0; border-left: 1px solid #303849; border-right: 1px solid #303849; border-radius: 0; padding: 8px 3px; background: transparent; text-align: center; font-variant-numeric: tabular-nums; }
+    .number-stepper .field-control:focus { border-color: #303849; box-shadow: none; }
+    .number-stepper input[type=number] { appearance: textfield; -moz-appearance: textfield; }
+    .number-stepper input[type=number]::-webkit-inner-spin-button, .number-stepper input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .step-button { display: grid; place-items: center; background: #252e3b; color: #f6c19a; border: none; padding: 0; min-width: 0; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: background .12s; }
+    .step-button:hover:not(:disabled) { background: #3b3e4a; }
+    .step-button:active:not(:disabled) { background: #5a4335; }
+    .step-button:disabled { color: #798493; background: #19202c; opacity: .48; }
+    .step-button svg { width: 16px; height: 16px; stroke-width: 2.3; }
     .note-input { resize: vertical; min-height: 74px; line-height: 1.5; }
     .field-help { color: #8995a5; font-size: 11px; margin-top: 6px; }
     .form-divider { height: 1px; background: #303a49; margin: 1px 0; }
@@ -234,6 +246,7 @@
   <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
     <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M8 7h8M8 11h5"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
     <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
     <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5"/><path d="M4 16v4h16v-4"/></symbol>
@@ -283,10 +296,10 @@
         <div class="form-cover"><label class="form-label" id="coverLabel">Cover <span class="optional">(optional)</span></label><div class="cover-drop" id="coverDrop" role="button" tabindex="0" aria-labelledby="coverLabel" aria-describedby="coverNote"><div class="upload-empty" id="coverEmpty"><svg><use href="#i-image"/></svg><strong>Cover hinzufügen</strong><small>Bild hier ablegen, klicken<br>oder mit Strg+V einfügen</small></div><img id="coverPreview" alt="Cover-Vorschau" hidden></div><div class="cover-actions"><button type="button" class="secondary-btn" id="chooseCover"><svg><use href="#i-image"/></svg>Datei</button><button type="button" class="secondary-btn" id="pasteCover"><svg><use href="#i-clipboard"/></svg>Einfügen</button></div><button id="removeCover" class="remove-cover" type="button" hidden>Cover entfernen</button><p class="cover-note" id="coverNote">Automatisch als WebP gespeichert, auf maximal 512 px Breite verkleinert.</p><input id="coverFile" type="file" accept="image/*" hidden></div>
         <div class="form-fields">
           <div><label class="form-label" for="comicTitle">Comic / Reihe *</label><input id="comicTitle" class="field-control" type="text" maxlength="120" required placeholder="z. B. Fantastic Four" autocomplete="off"></div>
-          <div class="form-row"><div><label class="form-label" for="comicVolume">Volume <span class="optional">(optional)</span></label><input id="comicVolume" class="field-control" type="text" maxlength="40" placeholder="z. B. 9"></div><div><label class="form-label" for="comicPart">Part <span class="optional">(optional)</span></label><input id="comicPart" class="field-control" type="text" maxlength="40" placeholder="z. B. 2"></div></div>
-          <div class="form-row"><div><label class="form-label" for="comicIssue">Ausgabe <span class="optional">(optional)</span></label><input id="comicIssue" class="field-control" type="text" maxlength="50" placeholder="z. B. 89"></div><div><label class="form-label" for="comicYear">Jahr <span class="optional">(optional)</span></label><input id="comicYear" class="field-control" type="number" min="1800" max="2200" step="1" placeholder="z. B. 1970"></div></div>
+          <div class="form-row"><div><label class="form-label" for="comicVolume">Volume <span class="optional">(optional)</span></label><div class="number-stepper"><button type="button" class="step-button" data-field="comicVolume" data-step="-1" aria-label="Volume um 1 verringern" title="Volume −1"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><input id="comicVolume" class="field-control" type="text" maxlength="40" placeholder="z. B. 9"><button type="button" class="step-button" data-field="comicVolume" data-step="1" aria-label="Volume um 1 erhöhen" title="Volume +1"><svg aria-hidden="true"><use href="#i-plus"/></svg></button></div></div><div><label class="form-label" for="comicPart">Part <span class="optional">(optional)</span></label><div class="number-stepper"><button type="button" class="step-button" data-field="comicPart" data-step="-1" aria-label="Part um 1 verringern" title="Part −1"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><input id="comicPart" class="field-control" type="text" maxlength="40" placeholder="z. B. 2"><button type="button" class="step-button" data-field="comicPart" data-step="1" aria-label="Part um 1 erhöhen" title="Part +1"><svg aria-hidden="true"><use href="#i-plus"/></svg></button></div></div></div>
+          <div class="form-row"><div><label class="form-label" for="comicIssue">Ausgabe <span class="optional">(optional)</span></label><div class="number-stepper"><button type="button" class="step-button" data-field="comicIssue" data-step="-1" aria-label="Ausgabe um 1 verringern" title="Ausgabe −1"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><input id="comicIssue" class="field-control" type="text" maxlength="50" placeholder="z. B. 89"><button type="button" class="step-button" data-field="comicIssue" data-step="1" aria-label="Ausgabe um 1 erhöhen" title="Ausgabe +1"><svg aria-hidden="true"><use href="#i-plus"/></svg></button></div></div><div><label class="form-label" for="comicYear">Jahr <span class="optional">(optional)</span></label><div class="number-stepper"><button type="button" class="step-button" data-field="comicYear" data-step="-1" aria-label="Jahr um 1 verringern" title="Jahr −1"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><input id="comicYear" class="field-control" type="number" min="1800" max="2200" step="1" inputmode="numeric" placeholder="z. B. 1970"><button type="button" class="step-button" data-field="comicYear" data-step="1" aria-label="Jahr um 1 erhöhen" title="Jahr +1"><svg aria-hidden="true"><use href="#i-plus"/></svg></button></div></div></div>
           <div class="form-divider"></div>
-          <div><label class="form-label" for="comicPage">Aktuelle Seite *</label><input id="comicPage" class="field-control" inputmode="numeric" type="text" required placeholder="z. B. 54 oder 54..." autocomplete="off"><div class="field-help">„54...“ kennzeichnet eine noch laufende Story.</div></div>
+          <div><label class="form-label" for="comicPage">Aktuelle Seite *</label><div class="number-stepper"><button type="button" class="step-button" data-field="comicPage" data-step="-1" aria-label="Aktuelle Seite um 1 verringern" title="Aktuelle Seite −1"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><input id="comicPage" class="field-control" inputmode="numeric" type="text" required placeholder="z. B. 54 oder 54..." autocomplete="off"><button type="button" class="step-button" data-field="comicPage" data-step="1" aria-label="Aktuelle Seite um 1 erhöhen" title="Aktuelle Seite +1"><svg aria-hidden="true"><use href="#i-plus"/></svg></button></div><div class="field-help">„54...“ kennzeichnet eine noch laufende Story.</div></div>
           <div><div class="story-label">Story-Status</div><div class="story-choice" role="group" aria-label="Story-Status"><button id="statusOpen" type="button" aria-pressed="false">54... · Story offen</button><button id="statusFinished" type="button" aria-pressed="true">54 · Beendet</button></div><div class="page-preview">Anzeige in der Liste: <strong id="pagePreview">Seite 54</strong></div></div>
           <div><label class="form-label" for="comicNote">Notiz <span class="optional">(optional)</span></label><textarea id="comicNote" class="field-control note-input" rows="2" maxlength="220" placeholder="z. B. Fortsetzung von Avengers #92"></textarea></div>
         </div>
@@ -481,6 +494,48 @@
       if (!Number.isSafeInteger(page) || page < 0 || page > 9999999) return null;
       return { page, hasDots: !!match[2] };
     }
+    // Volume/Part/Ausgabe bleiben Freitextfelder: bei nicht-numerischen Angaben
+    // sind +/- deaktiviert, damit z. B. „Annual 1“ nicht überschrieben wird.
+    const numericFields = {
+      comicVolume: { min: 0, max: 9999999, first: 1 },
+      comicPart:   { min: 0, max: 9999999, first: 1 },
+      comicIssue:  { min: 0, max: 9999999, first: 1 },
+      comicYear:   { min: 1800, max: 2200, first: () => Math.min(2200, Math.max(1800, new Date().getFullYear())) },
+      comicPage:   { min: 0, max: 9999999, first: 1 }
+    };
+    function readStepperValue(id) {
+      const value = $(id).value.trim();
+      if (!value) return { empty: true };
+      if (id === 'comicPage') {
+        const parsed = parsePage(value);
+        return parsed ? { empty: false, number: parsed.page, dots: parsed.hasDots } : null;
+      }
+      if (!/^\d+$/.test(value)) return null;
+      const number = Number(value);
+      return Number.isSafeInteger(number) ? { empty: false, number } : null;
+    }
+    function refreshSteppers() {
+      for (const [id, limits] of Object.entries(numericFields)) {
+        const value = readStepperValue(id);
+        const down = refs.form.querySelector(`[data-field="${id}"][data-step="-1"]`);
+        const up = refs.form.querySelector(`[data-field="${id}"][data-step="1"]`);
+        down.disabled = !value || value.empty || value.number <= limits.min;
+        up.disabled = !value || (!value.empty && value.number >= limits.max);
+      }
+    }
+    function adjustStepper(id, delta) {
+      const limits = numericFields[id];
+      if (!limits || (delta !== 1 && delta !== -1)) return;
+      const value = readStepperValue(id);
+      if (!value) return;
+      if (value.empty && delta < 0) return;
+      const next = value.empty ? (typeof limits.first === 'function' ? limits.first() : limits.first) : value.number + delta;
+      if (!Number.isSafeInteger(next) || next < limits.min || next > limits.max) return;
+      // Die „...“-Markierung der Seite bleibt beim Hoch-/Runterzählen erhalten.
+      $(id).value = id === 'comicPage' && value.dots ? `${next}...` : String(next);
+      $(id).dispatchEvent(new Event('input', { bubbles: true }));
+      refreshSteppers();
+    }
     function updatePagePreview() {
       const parsed = parsePage(refs.page.value);
       const page = parsed ? parsed.page : '54';
@@ -514,8 +569,11 @@
       updateCoverPreview();
       $('dialogTitle').textContent = existing ? 'Comic bearbeiten' : 'Comic hinzufügen';
       $('deleteEntry').hidden = !existing;
+      refreshSteppers();
       refs.dialog.showModal();
-      refs.title.focus();
+      // Bestehende Comics öffnen, ohne direkt die Smartphone-Tastatur einzublenden.
+      if (existing) $('closeDialog').focus({ preventScroll: true });
+      else refs.title.focus({ preventScroll: true });
     }
     async function handleSave(event) {
       event.preventDefault();
@@ -706,6 +764,13 @@
       refs.dialog.addEventListener('cancel', () => { state.imageToken++; });
       refs.dialog.addEventListener('click', event => { if (event.target === refs.dialog) closeEditor(); });
       refs.form.addEventListener('submit', handleSave);
+      refs.form.addEventListener('click', event => {
+        const button = event.target.closest('.step-button[data-field][data-step]');
+        if (button && refs.form.contains(button) && !button.disabled) adjustStepper(button.dataset.field, Number(button.dataset.step));
+      });
+      refs.form.addEventListener('input', event => {
+        if (event.target.closest('.number-stepper')) refreshSteppers();
+      });
       $('deleteEntry').addEventListener('click', deleteCurrentEntry);
       $('statusOpen').addEventListener('click', () => setStatus(true));
       $('statusFinished').addEventListener('click', () => { setStatus(false); const parsed = parsePage(refs.page.value); if (parsed?.hasDots) refs.page.value = String(parsed.page); state.pageInputHadDots = false; });

@@ -2,7 +2,7 @@ LESELISTE – INSTALLIERBARE PWA
 ==============================
 
 Inhalt:
-  index.html                Die Leseliste-App (Version 8, als PWA)
+  index.html                Die Leseliste-App (Version 9, als PWA)
   manifest.webmanifest      Installationsinformationen
   service-worker.js         Offline-Funktion
   icons/                    App-Icons
@@ -56,3 +56,17 @@ NEU IN VERSION 8
 - Auf Smartphones je nach Breite zwei bis drei Karten nebeneinander.
 - Ansichtswahl bleibt in IndexedDB gespeichert, bisherige Einträge kompatibel.
 - Offline-Cache für Version 8 aktualisiert.
+
+NEU IN VERSION 9
+- Im Bearbeiten-Dialog haben Volume, Part, Ausgabe, Jahr und Seite eigene
+  Plus-/Minus-Schaltflächen. Je Klick verändert sich die Zahl um eins.
+- Bei leeren Volume-/Part-/Ausgabe-/Seitenfeldern setzt + den Wert auf 1;
+  das erste + beim leeren Jahr setzt das aktuelle Kalenderjahr.
+- Bei Textangaben wie „Annual 1“ bleiben die Felder manuell editierbar;
+  die Schritt-Schaltflächen sind dann deaktiviert.
+- Zahlen werden nicht negativ; Jahre liegen weiterhin zwischen 1800 und 2200.
+- Seiten mit „...“ behalten beim Schrittzählen ihren Story-Status.
+- Beim Bearbeiten bestehender Einträge öffnet sich nicht automatisch die
+  Bildschirmtastatur.
+- IndexedDB-Schema und JSON-Backupformat bleiben unverändert.
+- Offline-Cache für Version 9 aktualisiert.
