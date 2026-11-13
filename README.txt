@@ -2,7 +2,7 @@ LESELISTE – INSTALLIERBARE PWA
 ==============================
 
 Inhalt:
-  index.html                Die Leseliste-App (Version 7, als PWA)
+  index.html                Die Leseliste-App (Version 8, als PWA)
   manifest.webmanifest      Installationsinformationen
   service-worker.js         Offline-Funktion
   icons/                    App-Icons
@@ -46,3 +46,13 @@ NEU IN VERSION 7
 - Notizen werden in IndexedDB und JSON-Backups gespeichert. Bestehende
   Datenbanken und bisherige JSON-Backups bleiben kompatibel.
 - Offline-Cache für Version 7 aktualisiert.
+
+NEU IN VERSION 8
+- Dritte Darstellungsoption unter Menü -> Ansicht: Micro-Ansicht.
+- Auf Tablets im Hochformat (ab 680 px) genau fünf Karten nebeneinander.
+- Cover bildet weiterhin den gesamten Kartenhintergrund.
+- Einzeiliger Titel, kleine Metadaten, kompakte Seitenzahl und Story-Status.
+- Notiz wird bei Platzmangel auf eine Zeile gekürzt, bleibt beim Bearbeiten vollständig.
+- Auf Smartphones je nach Breite zwei bis drei Karten nebeneinander.
+- Ansichtswahl bleibt in IndexedDB gespeichert, bisherige Einträge kompatibel.
+- Offline-Cache für Version 8 aktualisiert.

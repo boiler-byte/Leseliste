@@ -172,30 +172,59 @@
     @media (max-width: 540px) { .brand-title { font-size: 23px; } .brand-symbol { width: 39px; height: 39px; } .cards-grid { grid-template-columns: repeat(auto-fill,minmax(min(100%,250px),1fr)); } .cover-area { height: 275px; } .form-layout { display: flex; flex-direction: column; padding: 18px; gap: 22px; } .form-cover { max-width: 100%; } .cover-drop { min-height: 190px; } .cover-drop img { height: 215px; } .dialog-header { padding: 19px 18px 15px; } .dialog-header h2 { font-size: 23px; } .dialog-footer { padding: 15px 18px 20px; gap: 8px; flex-wrap: wrap; } .dialog-footer .primary-btn, .dialog-footer .cancel-btn { padding: 10px 12px; } .form-row { gap: 10px; } dialog { max-height: 94vh; } }
 
     /* Mini-Ansicht: Cover als Kartenhintergrund, Titel und Seitenzahl als Schnellaktionen. */
-    .cards-grid.mini-view { grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 12px; }
-    .mini-view .comic-card { height: 235px; position: relative; display: block; isolation: isolate; border-radius: 11px; background: #171d29; }
-    .mini-view .cover-area { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .mini-view .cover-area img { width: 100%; height: 100%; object-fit: cover; object-position: center center; }
-    .mini-view .cover-area:after { height: 100%; background: linear-gradient(to bottom, #080b12a6 0%, #080b1210 35%, #090c146e 57%, #090c14ea 83%, #090c14 100%); }
-    .mini-view .cover-placeholder:after { width: 70%; height: 85%; }
-    .mini-view .cover-placeholder .initial { font-size: 60px; }
-    .mini-view .cover-placeholder .placeholder-label { font-size: 8px; }
-    .mini-view .card-title { top: 9px; left: 9px; z-index: 3; display: block; width: calc(100% - 50px); max-width: calc(100% - 50px); padding: 5px 7px; border-radius: 6px; font-size: 13px; line-height: 1.3; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
-    .mini-view .title-button { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .mini-view .drag-handle { z-index: 4; top: 9px; right: 9px; width: 27px; height: 27px; border-radius: 6px; }
-    .mini-view .drag-handle svg { width: 14px; height: 14px; }
-    .mini-view .card-body { position: absolute; z-index: 3; inset: auto 0 0; display: flex; flex-direction: column; flex: none; padding: 6px 8px 7px; }
-    .mini-view .card-meta { gap: 3px; min-height: 0; max-height: 38px; overflow: hidden; }
-    .mini-view .meta-tag { font-size: 9px; line-height: 1.4; padding: 1px 4px; background: #121720bd; border-color: #ffffff36; color: #f0f1f3; border-radius: 4px; }
-    .mini-view .card-note { margin-top: 5px; padding: 4px 6px; border: 1px solid #ffffff33; border-left: 2px solid var(--accent); border-radius: 5px; background: #111722d9; color: #f1f3f6; font-size: 10px; line-height: 1.3; white-space: pre-wrap; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
-    .mini-view .page-box { margin-top: 6px; padding: 5px 6px; gap: 3px; border-radius: 6px; background: #141a25be; border-color: #ffffff24; }
-    .mini-view .page-increment small { display: none; }
-    .mini-view .page-number { font-size: 17px; letter-spacing: -.04em; }
-    .mini-view .status-toggle { font-size: 9px; padding: 5px 4px; max-width: 79px; border-radius: 5px; white-space: nowrap; }
+    .cards-grid:is(:is(.mini-view, .micro-view), .micro-view) { grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 12px; }
+    :is(.mini-view, .micro-view) .comic-card { height: 235px; position: relative; display: block; isolation: isolate; border-radius: 11px; background: #171d29; }
+    :is(.mini-view, .micro-view) .cover-area { position: absolute; inset: 0; width: 100%; height: 100%; }
+    :is(.mini-view, .micro-view) .cover-area img { width: 100%; height: 100%; object-fit: cover; object-position: center center; }
+    :is(.mini-view, .micro-view) .cover-area:after { height: 100%; background: linear-gradient(to bottom, #080b12a6 0%, #080b1210 35%, #090c146e 57%, #090c14ea 83%, #090c14 100%); }
+    :is(.mini-view, .micro-view) .cover-placeholder:after { width: 70%; height: 85%; }
+    :is(.mini-view, .micro-view) .cover-placeholder .initial { font-size: 60px; }
+    :is(.mini-view, .micro-view) .cover-placeholder .placeholder-label { font-size: 8px; }
+    :is(.mini-view, .micro-view) .card-title { top: 9px; left: 9px; z-index: 3; display: block; width: calc(100% - 50px); max-width: calc(100% - 50px); padding: 5px 7px; border-radius: 6px; font-size: 13px; line-height: 1.3; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
+    :is(.mini-view, .micro-view) .title-button { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    :is(.mini-view, .micro-view) .drag-handle { z-index: 4; top: 9px; right: 9px; width: 27px; height: 27px; border-radius: 6px; }
+    :is(.mini-view, .micro-view) .drag-handle svg { width: 14px; height: 14px; }
+    :is(.mini-view, .micro-view) .card-body { position: absolute; z-index: 3; inset: auto 0 0; display: flex; flex-direction: column; flex: none; padding: 6px 8px 7px; }
+    :is(.mini-view, .micro-view) .card-meta { gap: 3px; min-height: 0; max-height: 38px; overflow: hidden; }
+    :is(.mini-view, .micro-view) .meta-tag { font-size: 9px; line-height: 1.4; padding: 1px 4px; background: #121720bd; border-color: #ffffff36; color: #f0f1f3; border-radius: 4px; }
+    :is(.mini-view, .micro-view) .card-note { margin-top: 5px; padding: 4px 6px; border: 1px solid #ffffff33; border-left: 2px solid var(--accent); border-radius: 5px; background: #111722d9; color: #f1f3f6; font-size: 10px; line-height: 1.3; white-space: pre-wrap; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+    :is(.mini-view, .micro-view) .page-box { margin-top: 6px; padding: 5px 6px; gap: 3px; border-radius: 6px; background: #141a25be; border-color: #ffffff24; }
+    :is(.mini-view, .micro-view) .page-increment small { display: none; }
+    :is(.mini-view, .micro-view) .page-number { font-size: 17px; letter-spacing: -.04em; }
+    :is(.mini-view, .micro-view) .status-toggle { font-size: 9px; padding: 5px 4px; max-width: 79px; border-radius: 5px; white-space: nowrap; }
     @media (max-width: 540px) {
-      .cards-grid.mini-view { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
-      .mini-view .comic-card { height: 210px; }
-      .mini-view .card-title { font-size: 12px; }
+      .cards-grid:is(:is(.mini-view, .micro-view), .micro-view) { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+      :is(.mini-view, .micro-view) .comic-card { height: 210px; }
+      :is(.mini-view, .micro-view) .card-title { font-size: 12px; }
+    }
+    /* Micro: Cover als komplette Kartenfläche; fünf Cards pro Reihe auf Tablets hochkant. */
+    .cards-grid.micro-view { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 8px; }
+    .micro-view .comic-card { height: 178px; border-radius: 9px; }
+    .micro-view .card-title { top: 6px; left: 6px; width: calc(100% - 39px); max-width: calc(100% - 39px); padding: 4px 5px; border-radius: 5px; font-size: 10.5px; line-height: 1.25; }
+    .micro-view .drag-handle { top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 5px; }
+    .micro-view .drag-handle svg { width: 13px; height: 13px; }
+    .micro-view .card-body { padding: 5px 5px 6px; }
+    .micro-view .card-meta { gap: 2px; max-height: 32px; }
+    .micro-view .meta-tag { font-size: 8px; line-height: 1.35; padding: 1px 3px; border-radius: 3px; }
+    .micro-view .card-note { margin-top: 3px; padding: 3px 4px; font-size: 8px; line-height: 1.25; border-radius: 4px; -webkit-line-clamp: 1; line-clamp: 1; white-space: nowrap; text-overflow: ellipsis; }
+    .micro-view .page-box { margin-top: 4px; padding: 3px 3px; gap: 2px; border-radius: 5px; }
+    .micro-view .page-increment { padding: 0 2px; }
+    .micro-view .page-number { font-size: 15px; letter-spacing: -.045em; white-space: nowrap; }
+    .micro-view .status-toggle { font-size: 8px; padding: 5px 3px; max-width: 46px; border-radius: 4px; line-height: 1.15; }
+    .micro-view .cover-placeholder .initial { font-size: 45px; }
+    .micro-view .cover-placeholder .placeholder-label { font-size: 7px; }
+    @media (min-width: 680px) and (max-width: 1100px) and (orientation: portrait) {
+      .cards-grid.micro-view { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+    @media (min-width: 540px) and (max-width: 679px) {
+      .cards-grid.micro-view { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    @media (max-width: 539px) {
+      .cards-grid.micro-view { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+      .micro-view .comic-card { height: 165px; }
+    }
+    @media (max-width: 359px) {
+      .cards-grid.micro-view { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
   </style>
@@ -234,7 +263,7 @@
           <summary aria-label="Aktionen öffnen"><svg><use href="#i-menu"/></svg>Menü<svg class="chevron"><use href="#i-chevron"/></svg></summary>
           <div class="actions-panel">
             <div class="menu-section"><span class="menu-label">Erstellen</span><button type="button" id="menuCreate" class="primary-btn menu-create"><svg><use href="#i-plus"/></svg>Comic hinzufügen</button></div>
-            <div class="menu-section"><label class="menu-label" for="viewSelect">Ansicht</label><select class="field-control" id="viewSelect"><option value="standard">Standard</option><option value="mini">Mini-Ansicht</option></select></div>
+            <div class="menu-section"><label class="menu-label" for="viewSelect">Ansicht</label><select class="field-control" id="viewSelect"><option value="standard">Standard</option><option value="mini">Mini-Ansicht</option><option value="micro">Micro-Ansicht</option></select></div>
             <div class="menu-section"><label class="menu-label" for="sortSelect">Sortierung</label><select class="field-control" id="sortSelect"><option value="manual">Manuell</option><option value="recent">Letzte Änderung</option><option value="title">Titel A–Z</option></select></div>
             <div class="menu-section"><span class="menu-label">Import / Export</span><div class="menu-action-row"><button class="menu-action" id="importBtn" type="button"><svg><use href="#i-upload"/></svg>Import</button><button class="menu-action" id="exportBtn" type="button"><svg><use href="#i-download"/></svg>Export</button></div></div>
           </div>
@@ -414,7 +443,7 @@
       page.textContent = `${item.page}`;
       if (item.ongoing) { const dots = document.createElement('span'); dots.className = 'dots'; dots.textContent = '...'; page.append(dots); }
       const status = card.querySelector('.status-toggle');
-      status.textContent = item.ongoing ? '● Story offen' : '✓ Beendet';
+      status.textContent = state.view === 'micro' ? (item.ongoing ? '● Offen' : '✓ Fertig') : (item.ongoing ? '● Story offen' : '✓ Beendet');
       status.classList.toggle('finished', !item.ongoing);
       status.setAttribute('aria-label', item.ongoing ? 'Story offen, als beendet markieren' : 'Story beendet, als offen markieren');
       card.querySelector('.drag-handle').hidden = !manual;
@@ -424,6 +453,7 @@
       const visible = sortedEntries();
       const manual = isManualEnabled();
       refs.cards.classList.toggle('mini-view', state.view === 'mini');
+      refs.cards.classList.toggle('micro-view', state.view === 'micro');
       $('sortHint').hidden = !manual;
       refs.cards.replaceChildren(...visible.map((item,i) => makeCard(item,i,visible.length,manual)));
       const empty = $('emptyState');
@@ -660,7 +690,7 @@
       $('emptyCreate').addEventListener('click', () => openEditor());
       document.addEventListener('click', event => { if (!event.target.closest('#actionsMenu')) $('actionsMenu').open = false; });
       refs.view.addEventListener('change', async event => {
-        state.view = event.target.value === 'mini' ? 'mini' : 'standard';
+        state.view = ['standard','mini','micro'].includes(event.target.value) ? event.target.value : 'standard';
         $('actionsMenu').open = false;
         render();
         try { await savePreference('view', state.view); } catch (error) { handleError(error); }
@@ -864,7 +894,7 @@
         if (['manual','recent','title'].includes(pref?.value)) state.sort = pref.value;
         refs.sort.value = state.sort;
         const viewPref = await readStore(PREFS_STORE, 'view');
-        if (['standard', 'mini'].includes(viewPref?.value)) state.view = viewPref.value;
+        if (['standard', 'mini', 'micro'].includes(viewPref?.value)) state.view = viewPref.value;
         refs.view.value = state.view;
         render();
       } catch(error) { storageFailure(error); render(); }
