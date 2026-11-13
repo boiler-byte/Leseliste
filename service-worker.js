@@ -1,5 +1,5 @@
 // Nur App-Shell zwischenspeichern; Benutzerdaten befinden sich in IndexedDB.
-const CACHE = 'leseliste-pwa-v5';
+const CACHE = 'leseliste-pwa-v6';
 const APP_ASSETS = [
   './',
   './index.html',

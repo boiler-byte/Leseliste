@@ -2,7 +2,7 @@ LESELISTE – INSTALLIERBARE PWA
 ==============================
 
 Inhalt:
-  index.html                Die Leseliste-App (Version 5, als PWA)
+  index.html                Die Leseliste-App (Version 6, als PWA)
   manifest.webmanifest      Installationsinformationen
   service-worker.js         Offline-Funktion
   icons/                    App-Icons
@@ -34,10 +34,12 @@ PWA: Service Worker funktionieren nur über HTTPS oder localhost.
 
 Die App benötigt keine externen Bibliotheken oder Netzwerkdienste.
 
-NEU IN VERSION 5
-- Im Menü unter „Ansicht“ zwischen Standard und Mini-Ansicht umschalten.
-- Mini-Karten verwenden das Cover als vollflächigen Hintergrund.
-- Einzeilige, bei Bedarf gekürzte Titel und deutlich kleinere Schrift.
-- Ungefähr halb so viel Fläche je Comic-Karte, abhängig von Displaygröße.
-- Die Auswahl wird in IndexedDB gespeichert und beim nächsten Start geladen.
-- Alle Schnellaktionen, manuelle Sortierung und der Story-Status bleiben erhalten.
+NEU IN VERSION 6
+- Die untere Aktionszeile der Comic-Karten ist entfernt (Standard und Mini).
+- Tippen oder Klicken auf den Titel öffnet direkt den Bearbeiten-Dialog.
+- Tippen oder Klicken auf die aktuelle Seitenzahl erhöht sie um 1.
+- Der Story-Status kann weiterhin separat umgeschaltet werden.
+- Manuell sortieren: am Sortiergriff ziehen (auch auf Touchgeräten)
+  oder den Griff fokussieren und die Pfeiltasten drücken.
+- Die Mini-Karten sind etwas niedriger; die Ansicht bleibt gespeichert.
+- Aktualisierter Service-Worker-Cache für das PWA-Update.
