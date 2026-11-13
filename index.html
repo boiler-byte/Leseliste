@@ -166,6 +166,41 @@
     @media (max-width: 1040px) { .main-content { padding-inline: 30px; } .cards-grid { grid-template-columns: repeat(auto-fill,minmax(225px,1fr)); gap: 16px; } }
     @media (max-width: 760px) { .main-content { padding: 20px 20px 48px; } .topbar { margin-bottom: 27px; padding-bottom: 19px; } .sort-hint { display: none; } }
     @media (max-width: 540px) { .brand-title { font-size: 23px; } .brand-symbol { width: 39px; height: 39px; } .cards-grid { grid-template-columns: repeat(auto-fill,minmax(min(100%,250px),1fr)); } .cover-area { height: 275px; } .form-layout { display: flex; flex-direction: column; padding: 18px; gap: 22px; } .form-cover { max-width: 100%; } .cover-drop { min-height: 190px; } .cover-drop img { height: 215px; } .dialog-header { padding: 19px 18px 15px; } .dialog-header h2 { font-size: 23px; } .dialog-footer { padding: 15px 18px 20px; gap: 8px; flex-wrap: wrap; } .dialog-footer .primary-btn, .dialog-footer .cancel-btn { padding: 10px 12px; } .form-row { gap: 10px; } dialog { max-height: 94vh; } }
+
+    /* Mini-Ansicht: Cover als vollflächiger Kartenhintergrund, alle Aktionen bleiben verfügbar. */
+    .cards-grid.mini-view { grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 12px; }
+    .mini-view .comic-card { height: 265px; position: relative; display: block; isolation: isolate; border-radius: 11px; background: #171d29; }
+    .mini-view .cover-area { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .mini-view .cover-area img { width: 100%; height: 100%; object-fit: cover; object-position: center center; }
+    .mini-view .cover-area:after { height: 100%; background: linear-gradient(to bottom, #080b12a6 0%, #080b1210 35%, #090c146e 57%, #090c14ea 83%, #090c14 100%); }
+    .mini-view .cover-placeholder:after { width: 70%; height: 85%; }
+    .mini-view .cover-placeholder .initial { font-size: 60px; }
+    .mini-view .cover-placeholder .placeholder-label { font-size: 8px; }
+    .mini-view .card-title { top: 9px; left: 9px; z-index: 3; display: block; width: calc(100% - 50px); max-width: calc(100% - 50px); padding: 5px 7px; border-radius: 6px; font-size: 13px; line-height: 1.3; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
+    .mini-view .drag-handle { z-index: 4; top: 9px; right: 9px; width: 27px; height: 27px; border-radius: 6px; }
+    .mini-view .drag-handle svg { width: 14px; height: 14px; }
+    .mini-view .card-body { position: absolute; z-index: 3; inset: auto 0 0; display: flex; flex-direction: column; flex: none; padding: 6px 8px 7px; }
+    .mini-view .card-meta { gap: 3px; min-height: 0; max-height: 38px; overflow: hidden; }
+    .mini-view .meta-tag { font-size: 9px; line-height: 1.4; padding: 1px 4px; background: #121720bd; border-color: #ffffff36; color: #f0f1f3; border-radius: 4px; }
+    .mini-view .page-box { margin-top: 6px; padding: 5px 6px; gap: 3px; border-radius: 6px; background: #141a25be; border-color: #ffffff24; }
+    .mini-view .page-info small { display: none; }
+    .mini-view .page-number { font-size: 17px; letter-spacing: -.04em; }
+    .mini-view .status-toggle { font-size: 9px; padding: 5px 4px; max-width: 79px; border-radius: 5px; white-space: nowrap; }
+    .mini-view .card-bottom { padding-top: 5px; }
+    .mini-view .card-actions { margin: 0; padding: 0; gap: 3px; border: 0; }
+    .mini-view .card-action { min-height: 27px; padding: 4px; border-radius: 5px; font-size: 10px; gap: 2px; }
+    .mini-view .card-action svg { width: 13px; height: 13px; }
+    .mini-view .card-action.increment { padding: 4px 6px; }
+    .mini-view .increment-label { font-size: 0; }
+    .mini-view .increment-label:after { content: "1"; font-size: 10px; }
+    .mini-view .move-controls { gap: 0; padding-left: 3px; }
+    .mini-view .move-controls .card-action { width: 21px; padding: 3px; }
+    .mini-view .move-controls svg { width: 12px; height: 12px; }
+    @media (max-width: 540px) {
+      .cards-grid.mini-view { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+      .mini-view .comic-card { height: 240px; }
+      .mini-view .card-title { font-size: 12px; }
+    }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
   </style>
 </head>
@@ -203,6 +238,7 @@
           <summary aria-label="Aktionen öffnen"><svg><use href="#i-menu"/></svg>Menü<svg class="chevron"><use href="#i-chevron"/></svg></summary>
           <div class="actions-panel">
             <div class="menu-section"><span class="menu-label">Erstellen</span><button type="button" id="menuCreate" class="primary-btn menu-create"><svg><use href="#i-plus"/></svg>Comic hinzufügen</button></div>
+            <div class="menu-section"><label class="menu-label" for="viewSelect">Ansicht</label><select class="field-control" id="viewSelect"><option value="standard">Standard</option><option value="mini">Mini-Ansicht</option></select></div>
             <div class="menu-section"><label class="menu-label" for="sortSelect">Sortierung</label><select class="field-control" id="sortSelect"><option value="manual">Manuell</option><option value="recent">Letzte Änderung</option><option value="title">Titel A–Z</option></select></div>
             <div class="menu-section"><span class="menu-label">Import / Export</span><div class="menu-action-row"><button class="menu-action" id="importBtn" type="button"><svg><use href="#i-upload"/></svg>Import</button><button class="menu-action" id="exportBtn" type="button"><svg><use href="#i-download"/></svg>Export</button></div></div>
           </div>
@@ -246,12 +282,12 @@
     const MAX_COVER_WIDTH = 512;
     const $ = (id) => document.getElementById(id);
     const refs = {
-      cards: $('cards'), sort: $('sortSelect'), dialog: $('editorDialog'), form: $('entryForm'),
+      cards: $('cards'), sort: $('sortSelect'), view: $('viewSelect'), dialog: $('editorDialog'), form: $('entryForm'),
       title: $('comicTitle'), volume: $('comicVolume'), part: $('comicPart'), issue: $('comicIssue'), year: $('comicYear'),
       page: $('comicPage'), coverFile: $('coverFile'), coverDrop: $('coverDrop'), coverPreview: $('coverPreview'),
       coverEmpty: $('coverEmpty'), removeCover: $('removeCover'), save: $('saveEntry'), toast: $('toast')
     };
-    const state = { db: null, entries: [], sort: 'manual', editingId: null, cover: null, ongoing: false, pageInputHadDots: false, imageToken: 0, draggingId: null, toastTimer: null, busy: false };
+    const state = { db: null, entries: [], sort: 'manual', view: 'standard', editingId: null, cover: null, ongoing: false, pageInputHadDots: false, imageToken: 0, draggingId: null, toastTimer: null, busy: false };
     const icon = (name) => `<svg aria-hidden="true"><use href="#i-${name}"/></svg>`;
 
     function uid() {
@@ -344,7 +380,7 @@
         <div class="card-body"><div class="card-meta"></div>
           <div class="page-box"><div class="page-info"><small>Aktuelle Seite</small><div class="page-number"></div></div><button class="status-toggle" type="button" data-action="toggle" title="Story-Status ändern"></button></div>
           <div class="card-bottom"><div class="card-actions">
-            <button class="card-action increment" type="button" data-action="increment" title="Eine Seite weiter">${icon('plus')} 1 Seite</button>
+            <button class="card-action increment" type="button" data-action="increment" title="Eine Seite weiter">${icon('plus')}<span class="increment-label">1 Seite</span></button>
             <span class="card-spacer"></span>
             <button class="card-action" type="button" data-action="edit" title="Comic bearbeiten" aria-label="Comic bearbeiten">${icon('edit')}</button>
             <div class="move-controls"><button class="card-action" type="button" data-action="left" aria-label="In der manuellen Sortierung nach vorne" title="Nach vorne">${icon('arrow-left')}</button><button class="card-action" type="button" data-action="right" aria-label="In der manuellen Sortierung nach hinten" title="Nach hinten">${icon('arrow-right')}</button></div>
@@ -360,6 +396,7 @@
         card.querySelector('.initial').textContent = item.title.slice(0,1).toLocaleUpperCase('de') || 'C';
       }
       card.querySelector('.card-title').textContent = item.title;
+      card.querySelector('.card-title').title = item.title;
       const metas = [];
       if (item.volume) metas.push(`Vol ${item.volume}`);
       if (item.part) metas.push(`Pt ${item.part}`);
@@ -389,6 +426,7 @@
     function render() {
       const visible = sortedEntries();
       const manual = isManualEnabled();
+      refs.cards.classList.toggle('mini-view', state.view === 'mini');
       $('sortHint').hidden = !manual;
       refs.cards.replaceChildren(...visible.map((item,i) => makeCard(item,i,visible.length,manual)));
       const empty = $('emptyState');
@@ -623,6 +661,12 @@
       $('menuCreate').addEventListener('click', () => { $('actionsMenu').open = false; openEditor(); });
       $('emptyCreate').addEventListener('click', () => openEditor());
       document.addEventListener('click', event => { if (!event.target.closest('#actionsMenu')) $('actionsMenu').open = false; });
+      refs.view.addEventListener('change', async event => {
+        state.view = event.target.value === 'mini' ? 'mini' : 'standard';
+        $('actionsMenu').open = false;
+        render();
+        try { await savePreference('view', state.view); } catch (error) { handleError(error); }
+      });
       refs.sort.addEventListener('change', async event => {
         state.sort = event.target.value;
         $('actionsMenu').open = false;
@@ -722,6 +766,9 @@
         const pref = await readStore(PREFS_STORE, 'sort');
         if (['manual','recent','title'].includes(pref?.value)) state.sort = pref.value;
         refs.sort.value = state.sort;
+        const viewPref = await readStore(PREFS_STORE, 'view');
+        if (['standard', 'mini'].includes(viewPref?.value)) state.view = viewPref.value;
+        refs.view.value = state.view;
         render();
       } catch(error) { storageFailure(error); render(); }
     }
