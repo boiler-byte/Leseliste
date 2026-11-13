@@ -37,10 +37,10 @@
     [hidden] { display: none !important; }
     html { min-height: 100%; }
     body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-    button, input, select { font: inherit; }
+    button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
     button:disabled { opacity: .43; cursor: not-allowed; }
-    button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     svg { width: 19px; height: 19px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .app-shell { min-height: 100vh; }
     .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
@@ -80,7 +80,12 @@
     .comic-card { min-width: 0; border: 1px solid #2b3443; border-radius: 15px; background: #171d29; overflow: hidden; display: flex; flex-direction: column; transition: border-color .18s,transform .18s,box-shadow .18s; }
     .comic-card:hover { border-color: #5a5860; transform: translateY(-2px); box-shadow: var(--shadow); }
     .comic-card.drag-over { border-color: var(--accent); box-shadow: 0 0 0 2px #ffb46e45; }
-    .comic-card.dragging { opacity: .44; }
+    /* Die echte Karte bleibt beim Ziehen unter dem Finger; ihr Platz im Raster bleibt reserviert. */
+    .comic-card.dragging { opacity: 1; position: relative; z-index: 100; pointer-events: none; transition: none !important; box-shadow: 0 22px 50px #000c, 0 0 0 2px var(--accent); will-change: transform; }
+    .comic-card.dragging .drag-handle { background: #48301f; border-color: var(--accent); cursor: grabbing; }
+    .comic-card.drop-before { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .comic-card.drop-after { outline: 2px dashed var(--accent); outline-offset: 2px; }
+    body.reordering, body.reordering * { user-select: none !important; -webkit-user-select: none !important; }
     .cover-area { position: relative; height: 274px; background: #1b2230; overflow: hidden; }
     .cover-area:after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 65px; background: linear-gradient(transparent, #171d29a6); pointer-events: none; }
     .cover-area img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center center; }
@@ -95,11 +100,13 @@
     .title-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 3px; }
     .drag-handle { position: absolute; z-index: 2; right: 13px; top: 13px; width: 34px; height: 34px; border: 1px solid #ffffff39; border-radius: 8px; background: #10141dc9; color: #e7e8eb; display: grid; place-items: center; cursor: grab; backdrop-filter: blur(8px); }
     .drag-handle:active { cursor: grabbing; }
-    @media (pointer: coarse) { .drag-handle { touch-action: none; } }
+    /* touch-action:none verhindert Scrollen nur am Griff, nicht auf der Kartenfläche. */
+    .drag-handle { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
     .drag-handle svg { width: 17px; height: 17px; }
     .card-body { padding: 14px 19px 16px; display: flex; flex-direction: column; flex: 1; min-width: 0; }
     .card-meta { display: flex; flex-wrap: wrap; gap: 7px; min-height: 27px; }
     .meta-tag { color: #a7b1c0; background: #232b39; border: 1px solid #303a4b; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 640; }
+    .card-note { margin: 10px 0 0; border-left: 2px solid var(--accent); padding: 0 0 0 9px; color: #d4deec; font-size: 12px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
     .page-box { background: #1e2634; border: 1px solid #2c3645; border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
     .page-increment small { display: block; color: #97a2b1; font-size: 11px; margin-bottom: 1px; }
     .page-increment { display: block; min-width: 0; flex: 1; padding: 0 4px; border: 0; border-radius: 5px; background: transparent; color: inherit; text-align: left; cursor: pointer; }
@@ -142,7 +149,8 @@
     .remove-cover:hover { text-decoration: underline; }
     .form-fields { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
-    .form-fields input { min-width: 0; }
+    .form-fields input, .form-fields textarea { min-width: 0; }
+    .note-input { resize: vertical; min-height: 74px; line-height: 1.5; }
     .field-help { color: #8995a5; font-size: 11px; margin-top: 6px; }
     .form-divider { height: 1px; background: #303a49; margin: 1px 0; }
     .story-label { color: #c7ced9; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
@@ -179,6 +187,7 @@
     .mini-view .card-body { position: absolute; z-index: 3; inset: auto 0 0; display: flex; flex-direction: column; flex: none; padding: 6px 8px 7px; }
     .mini-view .card-meta { gap: 3px; min-height: 0; max-height: 38px; overflow: hidden; }
     .mini-view .meta-tag { font-size: 9px; line-height: 1.4; padding: 1px 4px; background: #121720bd; border-color: #ffffff36; color: #f0f1f3; border-radius: 4px; }
+    .mini-view .card-note { margin-top: 5px; padding: 4px 6px; border: 1px solid #ffffff33; border-left: 2px solid var(--accent); border-radius: 5px; background: #111722d9; color: #f1f3f6; font-size: 10px; line-height: 1.3; white-space: pre-wrap; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
     .mini-view .page-box { margin-top: 6px; padding: 5px 6px; gap: 3px; border-radius: 6px; background: #141a25be; border-color: #ffffff24; }
     .mini-view .page-increment small { display: none; }
     .mini-view .page-number { font-size: 17px; letter-spacing: -.04em; }
@@ -232,7 +241,7 @@
         </details>
       </header>
       <div id="storageWarning" class="notice" role="alert" hidden></div>
-      <div class="sort-hint" id="sortHint"><svg><use href="#i-grip"/></svg><span>Am Griff ziehen oder mit Pfeiltasten sortieren</span></div>
+      <div class="sort-hint" id="sortHint"><svg><use href="#i-grip"/></svg><span>Sortiergriff halten und Karte bewegen oder Pfeiltasten nutzen</span></div>
       <section id="emptyState" class="empty-state" hidden><div class="empty-symbol"><svg><use href="#i-book"/></svg></div><h3>Hier beginnt deine Sammlung.</h3><p>Trage deinen Lesestand ein – mit Ausgabe, Jahr, optionalem Volume und Part.</p><button class="primary-btn" id="emptyCreate" type="button"><svg><use href="#i-plus"/></svg>Erstes Comic hinzufügen</button></section>
       <section class="cards-grid" id="cards" aria-label="Gespeicherte Comics"></section>
     </main>
@@ -250,6 +259,7 @@
           <div class="form-divider"></div>
           <div><label class="form-label" for="comicPage">Aktuelle Seite *</label><input id="comicPage" class="field-control" inputmode="numeric" type="text" required placeholder="z. B. 54 oder 54..." autocomplete="off"><div class="field-help">„54...“ kennzeichnet eine noch laufende Story.</div></div>
           <div><div class="story-label">Story-Status</div><div class="story-choice" role="group" aria-label="Story-Status"><button id="statusOpen" type="button" aria-pressed="false">54... · Story offen</button><button id="statusFinished" type="button" aria-pressed="true">54 · Beendet</button></div><div class="page-preview">Anzeige in der Liste: <strong id="pagePreview">Seite 54</strong></div></div>
+          <div><label class="form-label" for="comicNote">Notiz <span class="optional">(optional)</span></label><textarea id="comicNote" class="field-control note-input" rows="2" maxlength="220" placeholder="z. B. Fortsetzung von Avengers #92"></textarea></div>
         </div>
       </div>
       <div class="dialog-footer"><button type="button" id="deleteEntry" class="delete-btn" hidden>Comic löschen</button><button type="button" class="cancel-btn" id="cancelDialog">Abbrechen</button><button class="primary-btn" id="saveEntry" type="submit"><svg><use href="#i-check"/></svg>Speichern</button></div>
@@ -271,10 +281,10 @@
     const refs = {
       cards: $('cards'), sort: $('sortSelect'), view: $('viewSelect'), dialog: $('editorDialog'), form: $('entryForm'),
       title: $('comicTitle'), volume: $('comicVolume'), part: $('comicPart'), issue: $('comicIssue'), year: $('comicYear'),
-      page: $('comicPage'), coverFile: $('coverFile'), coverDrop: $('coverDrop'), coverPreview: $('coverPreview'),
+      page: $('comicPage'), note: $('comicNote'), coverFile: $('coverFile'), coverDrop: $('coverDrop'), coverPreview: $('coverPreview'),
       coverEmpty: $('coverEmpty'), removeCover: $('removeCover'), save: $('saveEntry'), toast: $('toast')
     };
-    const state = { db: null, entries: [], sort: 'manual', view: 'standard', editingId: null, cover: null, ongoing: false, pageInputHadDots: false, imageToken: 0, draggingId: null, toastTimer: null, busy: false };
+    const state = { db: null, entries: [], sort: 'manual', view: 'standard', editingId: null, cover: null, ongoing: false, pageInputHadDots: false, imageToken: 0, toastTimer: null, busy: false };
     const icon = (name) => `<svg aria-hidden="true"><use href="#i-${name}"/></svg>`;
 
     function uid() {
@@ -362,9 +372,9 @@
           <div class="cover-placeholder"><div class="initial"></div><div class="placeholder-label">Comic Collection</div></div>
           <img class="cover-image" loading="lazy" hidden alt="">
           <h3 class="card-title"><button class="title-button" type="button" data-action="edit"></button></h3>
-          <span class="drag-handle" draggable="true" role="button" tabindex="0" aria-label="Comic durch Ziehen sortieren" title="Zum Sortieren ziehen">${icon('grip')}</span>
+          <span class="drag-handle" role="button" tabindex="0" aria-label="Comic halten und ziehen, um es zu sortieren" title="Halten und ziehen">${icon('grip')}</span>
         </div>
-        <div class="card-body"><div class="card-meta"></div>
+        <div class="card-body"><div class="card-meta"></div><p class="card-note" hidden></p>
           <div class="page-box"><button class="page-increment" type="button" data-action="increment" title="Seitenzahl um 1 erhöhen"><small>Aktuelle Seite</small><span class="page-number"></span></button><button class="status-toggle" type="button" data-action="toggle" title="Story-Status ändern"></button></div>
         </div>`;
       if (item.cover && item.cover.startsWith('data:image/webp;base64,')) {
@@ -390,6 +400,13 @@
       for (const text of metas) {
         const span = document.createElement('span'); span.className = 'meta-tag'; span.textContent = text;
         meta.append(span);
+      }
+      const note = cleanText(item.note, 220);
+      if (note) {
+        const noteNode = card.querySelector('.card-note');
+        noteNode.textContent = note; // Sicher: Notiz niemals als HTML auswerten.
+        noteNode.title = note;
+        noteNode.hidden = false;
       }
       const pageButton = card.querySelector('.page-increment');
       pageButton.setAttribute('aria-label', `Aktuelle Seite ${item.page}${item.ongoing ? ', Story offen' : ', Story beendet'}. Eine Seite weiter`);
@@ -461,6 +478,7 @@
       refs.issue.value = existing?.issue || '';
       refs.year.value = existing?.year || '';
       refs.page.value = existing ? String(existing.page) : '';
+      refs.note.value = existing?.note || '';
       state.cover = existing?.cover || null;
       setStatus(existing?.ongoing || false);
       updateCoverPreview();
@@ -482,7 +500,7 @@
       const now = Date.now();
       const entry = {
         id: old?.id || uid(), title, volume: cleanText(refs.volume.value,40), part: cleanText(refs.part.value,40),
-        issue: cleanText(refs.issue.value,50), year, page: pageResult.page,
+        issue: cleanText(refs.issue.value,50), year, note: cleanText(refs.note.value,220), page: pageResult.page,
         ongoing: pageResult.hasDots || state.ongoing, cover: state.cover,
         order: old?.order ?? (Math.max(-1, ...state.entries.map(item => item.order ?? -1)) + 1),
         createdAt: old?.createdAt || now, updatedAt: now
@@ -599,7 +617,7 @@
       return {
         id: typeof raw.id === 'string' && raw.id.length <= 120 && raw.id ? raw.id : uid(),
         title, volume: cleanText(raw.volume,40), part: cleanText(raw.part,40), issue: cleanText(raw.issue,50),
-        year: cleanText(raw.year,4), page, ongoing: raw.ongoing === true, cover,
+        year: cleanText(raw.year,4), note: cleanText(raw.note,220), page, ongoing: raw.ongoing === true, cover,
         order: index, createdAt, updatedAt
       };
     }
@@ -706,72 +724,129 @@
         await moveEntry(card.dataset.id, index + delta);
         [...refs.cards.querySelectorAll('.comic-card')].find(node => node.dataset.id === card.dataset.id)?.querySelector('.drag-handle')?.focus();
       });
-      let touchSort = null;
-      function clearTouchSort() {
-        refs.cards.querySelectorAll('.drag-over,.dragging').forEach(card => card.classList.remove('drag-over', 'dragging'));
-        touchSort = null;
+      // Einheitliches, direktes Dragging für Maus, Stift und Touch.
+      // Die originale Karte folgt dem Finger (nicht nur ein Umriss oder der Drop-Marker).
+      let activeDrag = null;
+      const dragCards = () => [...refs.cards.querySelectorAll('.comic-card')];
+      function clearDropHints() {
+        for (const card of dragCards()) card.classList.remove('drop-before', 'drop-after', 'drag-over');
+      }
+      function paintDraggedCard() {
+        const drag = activeDrag;
+        if (!drag) return;
+        const dx = drag.x - drag.startX + window.scrollX - drag.scrollX;
+        const dy = drag.y - drag.startY + window.scrollY - drag.scrollY;
+        drag.card.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+      }
+      function highlightDropPosition() {
+        const drag = activeDrag;
+        if (!drag) return;
+        clearDropHints();
+        drag.targetId = null;
+        const gridBox = refs.cards.getBoundingClientRect();
+        if (drag.x < gridBox.left - 18 || drag.x > gridBox.right + 18 ||
+            drag.y < gridBox.top - 18 || drag.y > gridBox.bottom + 18) return;
+        const candidates = dragCards().filter(card => card !== drag.card);
+        if (!candidates.length) return;
+        // pointer-events:none auf der gezogenen Karte erlaubt zuverlässiges Treffer-Testen.
+        let target = document.elementFromPoint(drag.x, drag.y)?.closest('.comic-card');
+        if (!target || !candidates.includes(target)) {
+          // Auch in den Zwischenräumen zwischen den Karten eine Einfügestelle anbieten.
+          let distance = Infinity;
+          for (const candidate of candidates) {
+            const r = candidate.getBoundingClientRect();
+            const dx = Math.max(r.left - drag.x, 0, drag.x - r.right);
+            const dy = Math.max(r.top - drag.y, 0, drag.y - r.bottom);
+            const d = dx * dx + dy * dy;
+            if (d < distance) { distance = d; target = candidate; }
+          }
+        }
+        if (!target || target === drag.card) return;
+        const rect = target.getBoundingClientRect();
+        const oneColumn = target.offsetWidth >= refs.cards.clientWidth * 0.7;
+        const after = oneColumn ? drag.y > rect.top + rect.height / 2 : drag.x > rect.left + rect.width / 2;
+        drag.targetId = target.dataset.id;
+        drag.after = after;
+        target.classList.add(after ? 'drop-after' : 'drop-before');
+      }
+      function scrollWhileDragging() {
+        const drag = activeDrag;
+        if (!drag) return;
+        const threshold = Math.min(85, window.innerHeight * 0.16);
+        let speed = 0;
+        if (drag.y < threshold) speed = -Math.ceil((threshold - drag.y) / threshold * 13);
+        else if (drag.y > window.innerHeight - threshold) speed = Math.ceil((drag.y - (window.innerHeight - threshold)) / threshold * 13);
+        if (speed) {
+          const was = window.scrollY;
+          window.scrollBy(0, speed);
+          if (window.scrollY !== was) { paintDraggedCard(); highlightDropPosition(); }
+        }
+        drag.raf = requestAnimationFrame(scrollWhileDragging);
+      }
+      function endDrag() {
+        const drag = activeDrag;
+        if (!drag) return null;
+        activeDrag = null;
+        cancelAnimationFrame(drag.raf);
+        try { if (drag.handle.hasPointerCapture(drag.pointerId)) drag.handle.releasePointerCapture(drag.pointerId); } catch (_) {}
+        drag.card.classList.remove('dragging');
+        drag.card.style.removeProperty('transform');
+        document.body.classList.remove('reordering');
+        clearDropHints();
+        return drag;
       }
       refs.cards.addEventListener('pointerdown', event => {
-        if (event.pointerType === 'mouse' || !event.isPrimary || !isManualEnabled()) return;
+        if (!isManualEnabled() || activeDrag || !event.isPrimary || event.button !== 0) return;
         const handle = event.target.closest('.drag-handle');
         const card = handle?.closest('.comic-card');
         if (!handle || !card) return;
         event.preventDefault();
-        touchSort = { pointerId: event.pointerId, sourceId: card.dataset.id, targetId: null };
+        activeDrag = {
+          pointerId: event.pointerId, card, handle, sourceId: card.dataset.id,
+          startX: event.clientX, startY: event.clientY,
+          x: event.clientX, y: event.clientY,
+          scrollX: window.scrollX, scrollY: window.scrollY,
+          targetId: null, after: false, raf: 0
+        };
         card.classList.add('dragging');
+        document.body.classList.add('reordering');
         handle.setPointerCapture(event.pointerId);
+        paintDraggedCard();
+        activeDrag.raf = requestAnimationFrame(scrollWhileDragging);
       });
       refs.cards.addEventListener('pointermove', event => {
-        if (!touchSort || touchSort.pointerId !== event.pointerId) return;
-        const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('.comic-card');
-        refs.cards.querySelectorAll('.drag-over').forEach(card => card.classList.remove('drag-over'));
-        touchSort.targetId = target && target.dataset.id !== touchSort.sourceId ? target.dataset.id : null;
-        if (touchSort.targetId) target.classList.add('drag-over');
+        const drag = activeDrag;
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        event.preventDefault();
+        drag.x = event.clientX;
+        drag.y = event.clientY;
+        paintDraggedCard();
+        highlightDropPosition();
       });
       refs.cards.addEventListener('pointerup', async event => {
-        if (!touchSort || touchSort.pointerId !== event.pointerId) return;
-        const { sourceId, targetId } = touchSort;
-        clearTouchSort();
-        if (!targetId) return;
-        const targetIndex = sortedEntries().findIndex(item => item.id === targetId);
-        if (targetIndex >= 0) await moveEntry(sourceId, targetIndex);
+        const drag = activeDrag;
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        event.preventDefault();
+        drag.x = event.clientX;
+        drag.y = event.clientY;
+        highlightDropPosition();
+        const result = endDrag();
+        if (!result?.targetId) return;
+        const list = sortedEntries();
+        const source = list.findIndex(item => item.id === result.sourceId);
+        const target = list.findIndex(item => item.id === result.targetId);
+        if (source < 0 || target < 0) return;
+        let insertion = target + (result.after ? 1 : 0);
+        if (source < insertion) insertion--;
+        insertion = Math.max(0, Math.min(list.length - 1, insertion));
+        if (insertion !== source) await moveEntry(result.sourceId, insertion);
       });
       refs.cards.addEventListener('pointercancel', event => {
-        if (touchSort && touchSort.pointerId === event.pointerId) clearTouchSort();
+        if (activeDrag && activeDrag.pointerId === event.pointerId) endDrag();
       });
-      refs.cards.addEventListener('dragstart', event => {
-        const handle = event.target.closest('.drag-handle');
-        const card = event.target.closest('.comic-card');
-        if (!handle || !card || !isManualEnabled()) { event.preventDefault(); return; }
-        state.draggingId = card.dataset.id;
-        event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/plain', state.draggingId);
-        card.classList.add('dragging');
+      refs.cards.addEventListener('lostpointercapture', event => {
+        if (activeDrag && activeDrag.pointerId === event.pointerId) endDrag();
       });
-      refs.cards.addEventListener('dragover', event => {
-        const card = event.target.closest('.comic-card');
-        if (!card || !state.draggingId || !isManualEnabled()) return;
-        event.preventDefault(); event.dataTransfer.dropEffect = 'move';
-        refs.cards.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-        if (card.dataset.id !== state.draggingId) card.classList.add('drag-over');
-      });
-      refs.cards.addEventListener('drop', async event => {
-        const target = event.target.closest('.comic-card');
-        event.preventDefault();
-        if (!target || !state.draggingId || !isManualEnabled()) return;
-        const sourceId = state.draggingId;
-        const items = sortedEntries();
-        const sourceIndex = items.findIndex(item => item.id === sourceId);
-        const targetIndex = items.findIndex(item => item.id === target.dataset.id);
-        const rect = target.getBoundingClientRect();
-        const after = event.clientY > rect.top + rect.height / 2;
-        let insertionIndex = targetIndex + (after ? 1 : 0);
-        if (sourceIndex < insertionIndex) insertionIndex--;
-        state.draggingId = null;
-        if (sourceIndex !== targetIndex) await moveEntry(sourceId, insertionIndex);
-        refs.cards.querySelectorAll('.drag-over,.dragging').forEach(el => el.classList.remove('drag-over','dragging'));
-      });
-      refs.cards.addEventListener('dragend', () => { state.draggingId = null; refs.cards.querySelectorAll('.drag-over,.dragging').forEach(el => el.classList.remove('drag-over','dragging')); });
       $('exportBtn').addEventListener('click', () => { $('actionsMenu').open = false; exportData(); });
       $('importBtn').addEventListener('click', () => { $('actionsMenu').open = false; $('importFile').click(); });
       $('importFile').addEventListener('change', async event => { const file = event.target.files?.[0]; await importData(file); event.target.value = ''; });
